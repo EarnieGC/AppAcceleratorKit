@@ -110,7 +110,7 @@ CBPeripheral * p;
  */
 -(UInt16) CBUUIDToInt:(CBUUID *) UUID {
     char b1[16];
-    [UUID.data getBytes:b1];
+    [UUID.data getBytes:b1 length:sizeof(b1)];
     return ((b1[0] << 8) | b1[1]);
 }
 
