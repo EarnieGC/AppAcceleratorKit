@@ -190,7 +190,7 @@ static BLEAdapter * _sharedBLEAdapter = nil;
     
     if (self->CM.state  != CBCentralManagerStatePoweredOn) {
         printf("CoreBluetooth not correctly initialized !\r\n");
-        printf("State = %d (%s)\r\n",self->CM.state,[self centralManagerStateToString:self.CM.state]);
+        printf("State = %ld (%s)\r\n",(long)self->CM.state,[self centralManagerStateToString:self.CM.state]);
         return -1;
     }
     
@@ -267,7 +267,7 @@ static BLEAdapter * _sharedBLEAdapter = nil;
 - (void) scanTimer:(NSTimer *)timer {
     [self.CM stopScan];
     printf("Stopped Scanning\r\n");
-    printf("Known peripherals : %d\r\n",[self->peripherals count]);
+    printf("Known peripherals : %lu\r\n",(unsigned long)[self->peripherals count]);
     [self printKnownPeripherals];
 }
 
@@ -303,7 +303,7 @@ static BLEAdapter * _sharedBLEAdapter = nil;
   
     printf("RSSI : %d\r\n",[peripheral.RSSI intValue]);
     printf("Name : %s\r\n",[peripheral.name cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
-    printf("isConnected : %d\r\n",peripheral.state);
+    printf("isConnected : %ld\r\n",(long)peripheral.state);
     printf("-------------------------------------\r\n");
     
 }
@@ -398,8 +398,8 @@ static BLEAdapter * _sharedBLEAdapter = nil;
 -(int) compareCBUUID:(CBUUID *) UUID1 UUID2:(CBUUID *)UUID2 {
     char b1[16];
     char b2[16];
-    [UUID1.data getBytes:b1];
-    [UUID2.data getBytes:b2];
+    [UUID1.data getBytes:b1 length:sizeof(b1)];
+    [UUID2.data getBytes:b2 length:sizeof(b2)];
     if (memcmp(b1, b2, UUID1.data.length) == 0)return 1;
     else return 0;
 }
@@ -418,7 +418,7 @@ static BLEAdapter * _sharedBLEAdapter = nil;
  */
 -(int) compareCBUUIDToInt:(CBUUID *)UUID1 UUID2:(UInt16)UUID2 {
     char b1[16];
-    [UUID1.data getBytes:b1];
+    [UUID1.data getBytes:b1 length:sizeof(b1)];
     UInt16 b2 = [self swap:UUID2];
     if (memcmp(b1, (char *)&b2, 2) == 0) return 1;
     else return 0;
@@ -435,7 +435,7 @@ static BLEAdapter * _sharedBLEAdapter = nil;
  */
 -(UInt16) CBUUIDToInt:(CBUUID *) UUID {
     char b1[16];
-    [UUID.data getBytes:b1];
+    [UUID.data getBytes:b1 length:sizeof(b1)];
     return ((b1[0] << 8) | b1[1]);
 }
 
@@ -511,7 +511,7 @@ static BLEAdapter * _sharedBLEAdapter = nil;
 //----------------------------------------------------------------------------------------------------
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    printf("Status of CoreBluetooth central manager changed %d (%s)\r\n",central.state,[self centralManagerStateToString:central.state]);
+    printf("Status of CoreBluetooth central manager changed %ld (%s)\r\n",(long)central.state,[self centralManagerStateToString:central.state]);
 }
 
 -(void)centralManager:(CBCentralManager *) central willRestoreState:(NSDictionary *)dict
